@@ -4,26 +4,88 @@
   <title><![CDATA[Grails Fu]]></title>
   <link href="http://manuelvio.github.com/atom.xml" rel="self"/>
   <link href="http://manuelvio.github.com/"/>
-  <updated>2013-03-21T15:23:26+01:00</updated>
+  <updated>2013-03-27T16:18:26+01:00</updated>
   <id>http://manuelvio.github.com/</id>
   <author>
-    <name><![CDATA[Manuel Vio]]></name>
+    <name><![CDATA[Manuel "Unno" Vio]]></name>
     
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
   
   <entry>
-    <title type="html"><![CDATA[First post with Octopress]]></title>
-    <link href="http://manuelvio.github.com/blog/2013/03/21/first-post-with-octopress/"/>
-    <updated>2013-03-21T09:34:00+01:00</updated>
-    <id>http://manuelvio.github.com/blog/2013/03/21/first-post-with-octopress</id>
-    <content type="html"><![CDATA[<p>This is my first post</p>
+    <title type="html"><![CDATA[Primo post con Octopress]]></title>
+    <link href="http://manuelvio.github.com/blog/2013/03/27/primo-post-con-octopress/"/>
+    <updated>2013-03-27T15:43:00+01:00</updated>
+    <id>http://manuelvio.github.com/blog/2013/03/27/primo-post-con-octopress</id>
+    <content type="html"><![CDATA[<p>Un blog su Grails in italiano? Perché no?</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Inserire il numero di revisione git nel nome del file war (modo semplice)]]></title>
+    <link href="http://manuelvio.github.com/blog/2013/03/27/simple-git-revision-number-in-war-filename/"/>
+    <updated>2013-03-27T15:24:00+01:00</updated>
+    <id>http://manuelvio.github.com/blog/2013/03/27/simple-git-revision-number-in-war-filename</id>
+    <content type="html"><![CDATA[<p>Nel mio ultimo progetto volevo un trovare un modo semplice di inserire il numero di revisione di git nel nome del file war, così ho installato il plugin <a href="http://grails.org/plugins/build-info">build-info</a>.</p>
 
 <!-- more -->
 
 
-<p>Nothing to see here, move along</p>
+<p>Questo plugin rende disponibile un gran numero di informazioni più o meno utili, tra le quali anche il numero di revisione di un eventuale Software di controllo di versione (Git e Subversion sono supportati).
+Sebbene non facesse esattamente ciò che volevo ho provato a vedere se, con qualche piccolo hack, sarei riuscito ad inserire il numero di revisione nel nome del file war, ma mi sono accorto che l&#8217;applicazione girava senza problemi con un <code>run-app</code>, mentre andava in crash quando cercavo di farla girare come war (<code>run-war</code>).
+Da un controllo nei file di log è saltata fuori un&#8217;eccezione (IllegalArgumentException) con un messaggio specifico: &#8220;Malformed \uxxxx encoding&#8221;.</p>
+
+<p>La ricerca su Google non mi ha dato molta soddisfazione, se non quella di confermare un&#8217;ipotesi iniziale di qualche carattere non permesso in un non meglio specificato <code>property file</code>.
+Ho provato ad eliminare tutte le ultime modifiche che potessero avere qualche riferimento con l&#8217;errore in questione, ma senza ottenere risultati, così ho deciso di provare a rimuovere anche il plugin e, finalmente, l&#8217;applicazione è ritornata a funzionare.</p>
+
+<p>Da quello che ho visto nel codice del plugin, nel file <code>application.properties</code> presente nel war erano stati inseriti anche i contenuti delle variabili d&#8217;ambiente al momento della creazione dell&#8217;archivio, ed è probabile che uno di questi mandasse in tilt la compilazione.
+Dato che comunque avrei dovuto gestire la cosa da me ho deciso che avrei fatto a meno del plugin (quasi) per intero.</p>
+
+<p>La parte che estraeva il numero di revisione l&#8217;ho copiata all&#8217;interno del file <code>BuildConfig.groovy</code>, con qualche piccola modifica:</p>
+
+<figure class='code'><figcaption><span>BuildConfig.groovy</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class='groovy'><span class='line'><span class="o">...</span>
+</span><span class='line'><span class="n">grails</span><span class="o">.</span><span class="na">project</span><span class="o">.</span><span class="na">war</span><span class="o">.</span><span class="na">file</span> <span class="o">=</span> <span class="s2">&quot;target/${appName}-${appVersion}-${determineRevision()}.war&quot;</span>
+</span><span class='line'><span class="o">...</span>
+</span><span class='line'><span class="kt">def</span> <span class="nf">determineRevision</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>    <span class="c1">// original code borrowed from build-info plugin</span>
+</span><span class='line'>    <span class="c1">// https://github.com/mjhugo/grails-build-info/blob/master/scripts/_Events.groovy</span>
+</span><span class='line'>    <span class="kt">def</span> <span class="n">scmVersion</span> <span class="o">=</span> <span class="s1">&#39;NO VERSION&#39;</span>
+</span><span class='line'>    <span class="k">try</span> <span class="o">{</span>
+</span><span class='line'>        <span class="kt">def</span> <span class="n">command</span> <span class="o">=</span> <span class="s2">&quot;git rev-parse HEAD&quot;</span>
+</span><span class='line'>        <span class="kt">def</span> <span class="n">proc</span> <span class="o">=</span> <span class="n">command</span><span class="o">.</span><span class="na">execute</span><span class="o">()</span>
+</span><span class='line'>        <span class="n">proc</span><span class="o">.</span><span class="na">waitFor</span><span class="o">()</span>
+</span><span class='line'>        <span class="k">if</span> <span class="o">(</span><span class="n">proc</span><span class="o">.</span><span class="na">exitValue</span><span class="o">()</span> <span class="o">==</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>            <span class="n">scmVersion</span> <span class="o">=</span> <span class="n">proc</span><span class="o">.</span><span class="na">in</span><span class="o">.</span><span class="na">text</span><span class="o">.</span><span class="na">take</span><span class="o">(</span><span class="mi">5</span><span class="o">)</span>
+</span><span class='line'>        <span class="o">}</span>
+</span><span class='line'>    <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">IOException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>        <span class="n">println</span> <span class="n">e</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>    <span class="n">scmVersion</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In questo modo nel nome del file war saranno presenti anche i primi cinque caratteri della revisione git.</p>
 ]]></content>
   </entry>
   

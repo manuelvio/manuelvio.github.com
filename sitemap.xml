@@ -1,12 +1,18 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
     <url>
-        <loc>http://manuelvio.github.com/blog/2013/03/21/first-post-with-octopress/</loc>
-        <lastmod>2013-03-21T09:39:03+01:00</lastmod>
+        <loc>
+            http://manuelvio.github.com/blog/2013/03/27/simple-git-revision-number-in-war-filename/
+        </loc>
+        <lastmod>2013-03-27T16:16:37+01:00</lastmod>
+    </url>
+    <url>
+        <loc>http://manuelvio.github.com/blog/2013/03/27/primo-post-con-octopress/</loc>
+        <lastmod>2013-03-27T15:44:56+01:00</lastmod>
     </url>
     <url>
         <loc>http://manuelvio.github.com/</loc>
-        <lastmod>2013-03-21T09:39:03+01:00</lastmod>
+        <lastmod>2013-03-27T16:16:37+01:00</lastmod>
     </url>
     <url>
         <loc>http://manuelvio.github.com/robots.txt</loc>
@@ -14,6 +20,6 @@
     </url>
     <url>
         <loc>http://manuelvio.github.com/blog/archives/</loc>
-        <lastmod>2013-03-21T09:39:03+01:00</lastmod>
+        <lastmod>2013-03-27T16:16:37+01:00</lastmod>
     </url>
 </urlset>
