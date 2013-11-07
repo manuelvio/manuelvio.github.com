@@ -4,7 +4,7 @@
   <title><![CDATA[Grails Fu]]></title>
   <link href="http://manuelvio.github.com/atom.xml" rel="self"/>
   <link href="http://manuelvio.github.com/"/>
-  <updated>2013-11-07T09:30:07+01:00</updated>
+  <updated>2013-11-07T09:47:03+01:00</updated>
   <id>http://manuelvio.github.com/</id>
   <author>
     <name><![CDATA[Manuel "Unno" Vio]]></name>
@@ -12,15 +12,6 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
-  
-  <entry>
-    <title type="html"><![CDATA[Primo post con Octopress]]></title>
-    <link href="http://manuelvio.github.com/blog/2013/03/27/primo-post-con-octopress/"/>
-    <updated>2013-03-27T15:43:00+01:00</updated>
-    <id>http://manuelvio.github.com/blog/2013/03/27/primo-post-con-octopress</id>
-    <content type="html"><![CDATA[<p>Un blog su Grails in italiano? Perché no?</p>
-]]></content>
-  </entry>
   
   <entry>
     <title type="html"><![CDATA[Inserire il numero di revisione git nel nome del file war (modo semplice)]]></title>
